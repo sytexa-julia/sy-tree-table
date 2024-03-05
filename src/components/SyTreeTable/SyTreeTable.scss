@@ -1,0 +1,35 @@
+.sy-tree-table {
+  width: 100%;
+}
+
+.sy-tree-table__table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.sy-tree-table {
+    & > table.sy-tree-table__table {
+      & > thead, tbody {
+        & > tr {
+          & > td, th {
+            &.sy-tree-table-tree-col {
+              cursor: pointer;
+            }
+            &.sy-tree-table-col--align-begin {
+              text-align: start;
+            }
+            &.sy-tree-table-col--align-end {
+              text-align: end;
+            }
+            &.sy-tree-table-col--align-center {
+              text-align: center;
+            }
+            &.sy-tree-table-col--align-justify {
+              text-align: justify;
+            }
+          }
+        }
+    }
+  }
+}
