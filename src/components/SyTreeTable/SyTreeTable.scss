@@ -12,6 +12,10 @@
     & > table.sy-tree-table__table {
       & > thead, tbody {
         & > tr {
+          &.sy-tree-table-row--focused {
+            background-color: #6ca0ff;
+          }
+
           & > td, th {
             &.sy-tree-table-tree-col {
               cursor: pointer;

@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import {inject} from "vue";
-import type {TreeTableRow} from "@/components/SyTreeTable/types";
+import type {FlatTreeTableRow, RowKey} from "@/components/SyTreeTable/types";
 import SyTreeRow from "@/components/SyTreeTable/SyTreeRow.vue";
 const emit = defineEmits<{
-  (event: 'expandRow', rowKey: string): void
-  (event: 'collapseRow', rowKey: string): void
+  (event: 'click:expandButton', rowKey: RowKey): void
 }>()
-const items = inject<TreeTableRow[]>('items')
+const items = inject<FlatTreeTableRow[]>('items')
 </script>
 
 <template>
@@ -14,8 +13,7 @@ const items = inject<TreeTableRow[]>('items')
       v-for="item in items"
       :key="item.key"
       :item="item"
-      @expand-row="emit('expandRow', $event)"
-      @collapse-row="emit('collapseRow', $event)"/>
+      @click:expand-button="emit('click:expandButton', $event)" />
 </template>
 
 <style scoped>

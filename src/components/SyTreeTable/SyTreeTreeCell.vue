@@ -2,14 +2,39 @@
 import SyTreeCell from "@/components/SyTreeTable/SyTreeCell.vue";
 import SyTreeGuide from "@/components/SyTreeTable/SyTreeGuide.vue";
 import SyTreeExpandButton from "@/components/SyTreeTable/SyTreeExpandButton.vue";
-const props = defineProps<{value: any, level: number, isExpanded: boolean, hasChildren: boolean}>()
+import {inject} from "vue";
+import type {RowKey} from "@/components/SyTreeTable/types";
+const props = defineProps<{rowKey: RowKey, columnKey: string, value: any, level: number, isExpanded: boolean, hasChildren: boolean}>()
+const emit = defineEmits<{
+  (event: 'click:cell', rowKey: RowKey, colKey: string): void
+}>()
+
+const emitClickCell = inject<(rowKey: RowKey, colKey: string) => void>('emitClickCell')
+
+function onCellClick(event: Event) {
+  if (emitClickCell) {
+    emitClickCell(props.rowKey, props.columnKey)
+  }
+
+  emit('click:cell', props.rowKey, props.columnKey)
+}
 </script>
 
 <template>
-  <sy-tree-cell :value="props.value" class="sy-tree-table-tree-col">
+  <sy-tree-cell
+      :row-key="rowKey"
+      :column-key="columnKey"
+      :value="props.value"
+      class="sy-tree-table-tree-col"
+      @click="onCellClick"
+  >
     <template #default="{ value }">
       <sy-tree-guide :level="level" />
-      <sy-tree-expand-button v-show="hasChildren" :is-expanded="isExpanded" />
+      <sy-tree-expand-button
+          v-show="hasChildren"
+          :row-key="rowKey"
+          :is-expanded="isExpanded"
+      />
       {{ value }}
     </template>
   </sy-tree-cell>

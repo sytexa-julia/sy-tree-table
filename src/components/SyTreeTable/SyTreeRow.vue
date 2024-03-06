@@ -1,24 +1,26 @@
 <script setup lang="ts">
 import {computed, inject, type MaybeRefOrGetter, toRefs, toValue} from "vue";
-import type {TreeTableColumn, TreeTableRow} from "@/components/SyTreeTable/types";
+import type {FlatTreeTableRow, RowKey, TreeTableColumn} from "@/components/SyTreeTable/types";
 import {get} from "lodash-es";
 import SyTreeCell from "@/components/SyTreeTable/SyTreeCell.vue";
 import SyTreeTreeCell from "@/components/SyTreeTable/SyTreeTreeCell.vue";
-import {useIsExpanded} from "@/components/SyTreeTable/useTreeTable";
+import {useIsExpanded, useIsRowFocused} from "@/components/SyTreeTable/useTreeTable";
 
 const emit = defineEmits<{
-  (event: 'expandRow', rowKey: string): void
-  (event: 'collapseRow', rowKey: string): void
+  (event: 'click:row', rowKey: RowKey): void
 }>()
 
+const emitClickRow = inject<(rowKey: RowKey) => void>('emitClickRow')
+
 const props = defineProps<{
-  item: TreeTableRow
+  item: FlatTreeTableRow
 }>()
 const {item} = toRefs(props)
 
 const columns = inject<MaybeRefOrGetter<TreeTableColumn[]>>('columns')
 
 const { isExpanded } = useIsExpanded(item)
+const { isRowFocused } = useIsRowFocused(item)
 
 const treeCol = computed(() => {
   const cols = toValue(columns)
@@ -39,43 +41,38 @@ const remainingCols = computed(() => {
   return cols.slice(1)
 })
 
-const visibleChildren = computed(() => {
-  if (isExpanded.value) {
-    return item.value.children
-  }
-
-  return []
-})
-
 function onRowClick() {
-  if (isExpanded.value) {
-    emit('collapseRow', item.value.key)
-  } else {
-    emit('expandRow', item.value.key)
+  if (emitClickRow) {
+    emitClickRow(item.value.key)
   }
+
+  emit('click:row', item.value.key)
 }
 </script>
 
 <template>
-  <tr :data-level="item.level">
+  <tr
+      :data-level="item.level"
+      :data-row-key="item.key"
+      :class="{
+        'sy-tree-table-row--focused': isRowFocused
+      }"
+      @click="onRowClick">
     <sy-tree-tree-cell
+        :row-key="item.key"
+        :column-key="treeCol.key"
         :value="get(item.data, treeCol.key)"
         :level="item.level"
         :is-expanded="isExpanded"
-        :has-children="!!item.children.length"
-        @click="onRowClick" />
+        :has-children="item.hasChildren"/>
     <sy-tree-cell
         v-for="col in remainingCols"
         :key="col.key"
+        :row-key="item.key"
+        :column-key="treeCol.key"
         :value="get(item.data, col.key)">
     </sy-tree-cell>
   </tr>
-  <sy-tree-row
-      v-for="child in visibleChildren"
-      :key="child.key"
-      :item="child"
-      @expand-row="$emit('expandRow', $event)"
-      @collapse-row="$emit('collapseRow', $event)"/>
 </template>
 
 <style scoped>
