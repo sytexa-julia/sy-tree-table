@@ -1,11 +1,16 @@
 export type RowKey = string | number
 
 export interface TreeTableProps {
-    columns?: TreeTableColumn[]
+    columns: TreeTableColumn[]
     items: any[]
     keyField: string
-    parentIdField: string,
+    parentIdField: string
     expandedRowKeys: RowKey[]
+}
+
+export interface InsertInfo {
+    childOf?: RowKey
+    siblingOf?: RowKey
 }
 
 export interface TreeHeadProps {
@@ -13,14 +18,14 @@ export interface TreeHeadProps {
 }
 
 export enum ColumnType {
-    Text
+    Text,
 }
 
 export enum ColumnAlign {
     Begin,
     End,
     Center,
-    Justify
+    Justify,
 }
 
 export type ColumnWidth = string | number
@@ -42,14 +47,14 @@ export interface FlatTreeTableRow {
     level: number
 }
 
-export interface TreeTableRow extends FlatTreeTableRow{
+export interface TreeTableRow extends FlatTreeTableRow {
     children: TreeTableRow[]
 }
 
 export enum SortDirection {
     None,
     Ascending,
-    Descending
+    Descending,
 }
 
 export interface TreeSortSpec {
@@ -60,7 +65,7 @@ export interface TreeSortSpec {
         /**
          * Direction to sort the column data
          */
-        sort: SortDirection,
+        sort: SortDirection
         /**
          * Index of the sort, for sorting by multiple columns
          */
