@@ -1,4 +1,4 @@
-# sy-tree-table
+# tree-table
 
 Proof-of-concept for a Vue3 native tree table component
 
